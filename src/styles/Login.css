@@ -1,0 +1,73 @@
+.authPage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.authCard {
+  width: 100%;
+  max-width: 430px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.authBrand {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), #3fc7ff);
+  color: white;
+}
+
+.authCard h1 {
+  margin: 0 0 8px;
+}
+
+.authText {
+  margin: 0 0 20px;
+  color: var(--muted);
+}
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.authForm input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  outline: none;
+}
+
+.authForm input::placeholder {
+  color: var(--muted);
+}
+
+.authForm input:focus {
+  border-color: rgba(109, 124, 255, 0.55);
+  box-shadow: 0 0 0 4px rgba(109, 124, 255, 0.12);
+}
+
+.authBtn {
+  width: 100%;
+}
+
+.errorBox {
+  border: 1px solid rgba(251, 113, 133, 0.35);
+  background: rgba(251, 113, 133, 0.12);
+  color: #ffd7df;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
