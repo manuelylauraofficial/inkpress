@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { supabase } from './lib/supabase'
-import Layout from './components/Layout'
 import Sidebar from './components/Sidebar'
 import Header from './components/Header'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -11,14 +10,42 @@ import Customers from './pages/Customers'
 import Products from './pages/Products'
 import Orders from './pages/Orders'
 import StockMovements from './pages/StockMovements'
+import './styles/Layout.css'
 
 function AppContent() {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [theme, setTheme] = useState(() => localStorage.getItem('inkpress-theme') || 'dark')
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('inkpress-theme', theme)
+  }, [theme])
+
+  function handleToggleSidebar() {
+    setSidebarOpen((current) => !current)
+  }
+
+  function handleCloseSidebar() {
+    setSidebarOpen(false)
+  }
+
+  function handleToggleTheme() {
+    setTheme((current) => (current === 'dark' ? 'light' : 'dark'))
+  }
+
   return (
     <div className="appShell">
-      <Sidebar />
+      <Sidebar open={sidebarOpen} onClose={handleCloseSidebar} />
+
       <div className="mainArea">
-        <Header />
-        <main className="pageContent">
+        <Header
+          sidebarOpen={sidebarOpen}
+          onToggleSidebar={handleToggleSidebar}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
+        />
+
+        <main className="pageContent" onClick={handleCloseSidebar}>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -67,9 +94,7 @@ export default function App() {
         path="/*"
         element={
           <ProtectedRoute session={session}>
-            <Layout>
-              <AppContent />
-            </Layout>
+            <AppContent />
           </ProtectedRoute>
         }
       />

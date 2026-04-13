@@ -27,12 +27,78 @@ const emptyStockForm = {
   notes: '',
 }
 
+const inventoryViews = [
+  { value: 'all', label: 'Tutti' },
+  { value: 'uomo', label: 'Uomo' },
+  { value: 'donna_round', label: 'Donna · Collo tondo' },
+  { value: 'donna_v', label: 'Donna · Collo a V' },
+  { value: 'donna_other', label: 'Donna · Altri modelli' },
+  { value: 'other', label: 'Altro' },
+]
+
+function normalize(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}
+
+function classifyProduct(product) {
+  const source = normalize(`${product.category} ${product.name} ${product.description}`)
+
+  const isWoman = /(donna|women|woman|lady|female|ragazza)/.test(source)
+  const isMan = /(uomo|men|man|male|unisex uomo)/.test(source)
+  const isVNeck = /(collo a v|scollo a v|v-neck|v neck|collo v)/.test(source)
+  const isRoundNeck = /(collo tondo|girocollo|crew neck|round neck)/.test(source)
+
+  let audience = 'other'
+  if (isWoman) audience = 'donna'
+  else if (isMan) audience = 'uomo'
+
+  let neckline = 'other'
+  if (audience === 'donna') {
+    if (isVNeck) neckline = 'v'
+    else if (isRoundNeck) neckline = 'round'
+  }
+
+  let inventoryGroup = 'other'
+  if (audience === 'uomo') inventoryGroup = 'uomo'
+  if (audience === 'donna' && neckline === 'round') inventoryGroup = 'donna_round'
+  if (audience === 'donna' && neckline === 'v') inventoryGroup = 'donna_v'
+  if (audience === 'donna' && neckline === 'other') inventoryGroup = 'donna_other'
+
+  return {
+    audience,
+    neckline,
+    inventoryGroup,
+    audienceLabel:
+      audience === 'donna' ? 'Donna' : audience === 'uomo' ? 'Uomo' : 'Altro',
+    necklineLabel:
+      audience !== 'donna'
+        ? ''
+        : neckline === 'round'
+          ? 'Collo tondo'
+          : neckline === 'v'
+            ? 'Collo a V'
+            : 'Altro modello',
+  }
+}
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat('it-IT', {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(Number(value || 0))
+}
+
 export default function Products() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [stockSaving, setStockSaving] = useState(false)
   const [search, setSearch] = useState('')
+  const [inventoryView, setInventoryView] = useState('all')
+  const [stockFilter, setStockFilter] = useState('all')
   const [openModal, setOpenModal] = useState(false)
   const [stockModalOpen, setStockModalOpen] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -257,16 +323,91 @@ export default function Products() {
     await loadProducts()
   }
 
+  const enrichedProducts = useMemo(
+    () =>
+      products.map((product) => {
+        const classification = classifyProduct(product)
+        const stockQty = Number(product.stock_qty || 0)
+        const minStock = Number(product.min_stock || 0)
+        return {
+          ...product,
+          ...classification,
+          stockQty,
+          minStock,
+          lowStock: stockQty <= minStock,
+        }
+      }),
+    [products]
+  )
+
+  const inventoryStats = useMemo(() => {
+    const statsMap = {
+      all: { items: 0, stock: 0, low: 0 },
+      uomo: { items: 0, stock: 0, low: 0 },
+      donna_round: { items: 0, stock: 0, low: 0 },
+      donna_v: { items: 0, stock: 0, low: 0 },
+      donna_other: { items: 0, stock: 0, low: 0 },
+      other: { items: 0, stock: 0, low: 0 },
+    }
+
+    enrichedProducts.forEach((product) => {
+      const group = product.inventoryGroup
+      statsMap.all.items += 1
+      statsMap.all.stock += product.stockQty
+      if (product.lowStock) statsMap.all.low += 1
+
+      if (!statsMap[group]) statsMap[group] = { items: 0, stock: 0, low: 0 }
+      statsMap[group].items += 1
+      statsMap[group].stock += product.stockQty
+      if (product.lowStock) statsMap[group].low += 1
+    })
+
+    return statsMap
+  }, [enrichedProducts])
+
   const filteredProducts = useMemo(() => {
     const q = search.trim().toLowerCase()
-    if (!q) return products
 
-    return products.filter((product) =>
-      [product.sku, product.name, product.category, product.brand, product.color, product.size]
-        .filter(Boolean)
-        .some((value) => value.toLowerCase().includes(q))
-    )
-  }, [products, search])
+    return enrichedProducts.filter((product) => {
+      const viewMatch = inventoryView === 'all' || product.inventoryGroup === inventoryView
+      const stockMatch =
+        stockFilter === 'all' || (stockFilter === 'low' ? product.lowStock : !product.lowStock)
+
+      const textMatch =
+        !q ||
+        [
+          product.sku,
+          product.name,
+          product.category,
+          product.brand,
+          product.color,
+          product.size,
+          product.audienceLabel,
+          product.necklineLabel,
+        ]
+          .filter(Boolean)
+          .some((value) => value.toLowerCase().includes(q))
+
+      return viewMatch && stockMatch && textMatch
+    })
+  }, [enrichedProducts, inventoryView, stockFilter, search])
+
+  const groupedProducts = useMemo(() => {
+    const groups = [
+      { key: 'uomo', title: 'Uomo', subtitle: 'Capi uomo e relative scorte' },
+      { key: 'donna_round', title: 'Donna · Collo tondo', subtitle: 'Modelli donna girocollo' },
+      { key: 'donna_v', title: 'Donna · Collo a V', subtitle: 'Modelli donna con scollo a V' },
+      { key: 'donna_other', title: 'Donna · Altri modelli', subtitle: 'Capi donna senza collo classificato' },
+      { key: 'other', title: 'Altro', subtitle: 'Prodotti da classificare o fuori reparto' },
+    ]
+
+    return groups
+      .map((group) => ({
+        ...group,
+        products: filteredProducts.filter((product) => product.inventoryGroup === group.key),
+      }))
+      .filter((group) => group.products.length > 0)
+  }, [filteredProducts])
 
   return (
     <div className="pageWrap">
@@ -274,7 +415,7 @@ export default function Products() {
         <div>
           <h2 className="sectionTitle">Magazzino</h2>
           <p className="sectionText">
-            Gestione capi disponibili con immagini, varianti e quantità.
+            Vista più rapida e intuitiva per controllare scorte, reparti e varianti dei capi.
           </p>
         </div>
 
@@ -283,15 +424,47 @@ export default function Products() {
         </button>
       </div>
 
+      <section className="inventorySummaryGrid">
+        {inventoryViews.map((view) => {
+          const stat = inventoryStats[view.value] || { items: 0, stock: 0, low: 0 }
+          const active = inventoryView === view.value
+
+          return (
+            <button
+              key={view.value}
+              type="button"
+              className={active ? 'inventorySummaryCard active' : 'inventorySummaryCard'}
+              onClick={() => setInventoryView(view.value)}
+            >
+              <span className="inventorySummaryLabel">{view.label}</span>
+              <strong className="inventorySummaryValue">{loading ? '...' : stat.items}</strong>
+              <span className="inventorySummaryMeta">
+                {loading ? 'Caricamento...' : `${stat.stock} pezzi • ${stat.low} sotto soglia`}
+              </span>
+            </button>
+          )
+        })}
+      </section>
+
       <section className="card">
-        <div className="toolbar">
+        <div className="productsToolbar">
           <input
             className="searchInput"
             type="text"
-            placeholder="Cerca per SKU, nome, categoria, brand, colore o taglia..."
+            placeholder="Cerca per SKU, nome, categoria, brand, colore, taglia o reparto..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+
+          <select value={stockFilter} onChange={(e) => setStockFilter(e.target.value)}>
+            <option value="all">Tutte le scorte</option>
+            <option value="low">Solo scorte basse</option>
+            <option value="ok">Solo scorte ok</option>
+          </select>
+        </div>
+
+        <div className="classificationHint">
+          Suggerimento: per vedere la divisione automatica usa parole come <strong>uomo</strong>, <strong>donna</strong>, <strong>collo tondo</strong> o <strong>collo a V</strong> nel nome, categoria o descrizione del prodotto.
         </div>
 
         {error ? <div className="errorBox productsMessage">{error}</div> : null}
@@ -300,85 +473,120 @@ export default function Products() {
         {loading ? (
           <div className="emptyState">Caricamento prodotti...</div>
         ) : filteredProducts.length === 0 ? (
-          <div className="emptyState">Nessun prodotto trovato.</div>
+          <div className="emptyState">Nessun prodotto trovato con i filtri attuali.</div>
         ) : (
-          <div className="productsGrid">
-            {filteredProducts.map((product) => {
-              const lowStock = Number(product.stock_qty || 0) <= Number(product.min_stock || 0)
-
-              return (
-                <article className="productCard" key={product.id}>
-                  <div className="productImageWrap">
-                    {product.image_url ? (
-                      <img src={product.image_url} alt={product.name} className="productImage" />
-                    ) : (
-                      <div className="productImagePlaceholder">Nessuna immagine</div>
-                    )}
+          <div className="groupedInventoryWrap">
+            {groupedProducts.map((group) => (
+              <section className="inventoryGroupSection" key={group.key}>
+                <div className="inventoryGroupHeader">
+                  <div>
+                    <h3>{group.title}</h3>
+                    <p>{group.subtitle}</p>
                   </div>
 
-                  <div className="productBody">
-                    <div className="productTop">
-                      <div>
-                        <h3 className="productTitle">{product.name}</h3>
-                        <p className="productSku">{product.sku || 'SKU non impostato'}</p>
-                      </div>
-
-                      <div className="productBadges">
-                        <span className={product.is_active ? 'statusBadge active' : 'statusBadge inactive'}>
-                          {product.is_active ? 'Attivo' : 'Disattivo'}
-                        </span>
-
-                        {lowStock ? <span className="lowStockBadge">Scorte basse</span> : null}
-                      </div>
-                    </div>
-
-                    <div className="productMeta">
-                      <span>{product.category || '—'}</span>
-                      <span>{product.brand || '—'}</span>
-                      <span>{product.color || '—'}</span>
-                      <span>{product.size || '—'}</span>
-                    </div>
-
-                    <div className="productStockRow">
-                      <div>
-                        <div className="productStockLabel">Disponibilità</div>
-                        <div className={lowStock ? 'productStockValue low' : 'productStockValue'}>
-                          {product.stock_qty ?? 0}
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="productStockLabel">Scorta minima</div>
-                        <div className="productStockValue secondary">
-                          {product.min_stock ?? 0}
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="productStockLabel">Prezzo base</div>
-                        <div className="productStockValue secondary">
-                          € {Number(product.base_price || 0).toFixed(2)}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="rowActions">
-                      <button className="secondaryBtn smallBtn" onClick={() => handleOpenEdit(product)}>
-                        Modifica
-                      </button>
-
-                      <button className="secondaryBtn smallBtn" onClick={() => handleOpenStockModal(product)}>
-                        Magazzino
-                      </button>
-
-                      <button className="dangerBtn smallBtn" onClick={() => handleDelete(product.id)}>
-                        Elimina
-                      </button>
-                    </div>
+                  <div className="inventoryGroupCounter">
+                    <strong>{group.products.length}</strong>
+                    <span>articoli</span>
                   </div>
-                </article>
-              )
-            })}
+                </div>
+
+                <div className="productsGrid">
+                  {group.products.map((product) => (
+                    <article className="productCard" key={product.id}>
+                      <div className="productImageWrap">
+                        {product.image_url ? (
+                          <img src={product.image_url} alt={product.name} className="productImage" />
+                        ) : (
+                          <div className="productImagePlaceholder">Nessuna immagine</div>
+                        )}
+                      </div>
+
+                      <div className="productBody">
+                        <div className="productTop">
+                          <div>
+                            <h3 className="productTitle">{product.name}</h3>
+                            <p className="productSku">{product.sku || 'SKU non impostato'}</p>
+                          </div>
+
+                          <div className="productBadges">
+                            <span className={product.is_active ? 'statusBadge active' : 'statusBadge inactive'}>
+                              {product.is_active ? 'Attivo' : 'Disattivo'}
+                            </span>
+
+                            {product.lowStock ? <span className="lowStockBadge">Scorte basse</span> : null}
+                          </div>
+                        </div>
+
+                        <div className="productMeta productMetaWrap">
+                          <span>{product.audienceLabel}</span>
+                          {product.necklineLabel ? <span>{product.necklineLabel}</span> : null}
+                          <span>{product.category || 'Categoria libera'}</span>
+                          <span>{product.brand || 'Brand —'}</span>
+                          <span>{product.color || 'Colore —'}</span>
+                          <span>{product.size || 'Taglia —'}</span>
+                        </div>
+
+                        <div className="productStockPanel">
+                          <div className="productStockPanelTop">
+                            <div>
+                              <div className="productStockLabel">Disponibilità</div>
+                              <div className={product.lowStock ? 'productStockValue low' : 'productStockValue'}>
+                                {product.stockQty}
+                              </div>
+                            </div>
+
+                            <div>
+                              <div className="productStockLabel">Scorta minima</div>
+                              <div className="productStockValue secondary">{product.minStock}</div>
+                            </div>
+
+                            <div>
+                              <div className="productStockLabel">Prezzo base</div>
+                              <div className="productStockValue secondary">
+                                {formatCurrency(product.base_price)}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="stockProgressTrack">
+                            <span
+                              className={product.lowStock ? 'stockProgressFill low' : 'stockProgressFill'}
+                              style={{
+                                width: `${Math.min(
+                                  100,
+                                  Math.max(
+                                    8,
+                                    product.minStock > 0
+                                      ? (product.stockQty / product.minStock) * 100
+                                      : product.stockQty > 0
+                                        ? 100
+                                        : 8
+                                  )
+                                )}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="rowActions">
+                          <button className="secondaryBtn smallBtn" onClick={() => handleOpenEdit(product)}>
+                            Modifica
+                          </button>
+
+                          <button className="secondaryBtn smallBtn" onClick={() => handleOpenStockModal(product)}>
+                            Aggiorna scorte
+                          </button>
+
+                          <button className="dangerBtn smallBtn" onClick={() => handleDelete(product.id)}>
+                            Elimina
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            ))}
           </div>
         )}
       </section>
@@ -405,8 +613,8 @@ export default function Products() {
               </div>
 
               <div className="field">
-                <label>Categoria</label>
-                <input name="category" value={form.category} onChange={handleChange} />
+                <label>Categoria / reparto</label>
+                <input name="category" value={form.category} onChange={handleChange} placeholder="Es. Donna, Donna collo a V, Uomo..." />
               </div>
 
               <div className="field">
@@ -495,6 +703,7 @@ export default function Products() {
             <div className="stockModalInfo">
               <div><strong>Prodotto:</strong> {selectedProduct.name}</div>
               <div><strong>SKU:</strong> {selectedProduct.sku || '—'}</div>
+              <div><strong>Reparto:</strong> {classifyProduct(selectedProduct).audienceLabel}{classifyProduct(selectedProduct).necklineLabel ? ` · ${classifyProduct(selectedProduct).necklineLabel}` : ''}</div>
               <div><strong>Stock attuale:</strong> {selectedProduct.stock_qty}</div>
             </div>
 

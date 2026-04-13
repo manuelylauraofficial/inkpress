@@ -1,6 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import '../styles/Dashboard.css'
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat('it-IT', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 2,
+  }).format(Number(value || 0))
+}
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -8,6 +16,10 @@ export default function Dashboard() {
     customers: 0,
     products: 0,
     lowStock: 0,
+    deliveredRevenue: 0,
+    totalSalesValue: 0,
+    manuelShare: 0,
+    lauraShare: 0,
     recentOrders: [],
     lowStockProducts: [],
   })
@@ -40,9 +52,7 @@ export default function Dashboard() {
         .neq('status', 'annullato')
         .order('created_at', { ascending: false }),
 
-      supabase
-        .from('customers')
-        .select('id', { count: 'exact', head: true }),
+      supabase.from('customers').select('id', { count: 'exact', head: true }),
 
       supabase
         .from('products')
@@ -64,6 +74,10 @@ export default function Dashboard() {
     const allOrders = ordersRes.data || []
     const allProducts = productsRes.data || []
 
+    const deliveredOrders = allOrders.filter((order) => order.status === 'consegnato')
+    const deliveredRevenue = deliveredOrders.reduce((sum, order) => sum + Number(order.total || 0), 0)
+    const totalSalesValue = allOrders.reduce((sum, order) => sum + Number(order.total || 0), 0)
+
     const lowStockProducts = allProducts.filter(
       (product) => Number(product.stock_qty || 0) <= Number(product.min_stock || 0)
     )
@@ -73,12 +87,70 @@ export default function Dashboard() {
       customers: customersRes.count || 0,
       products: productsRes.count || 0,
       lowStock: lowStockProducts.length,
-      recentOrders: allOrders.slice(0, 5),
-      lowStockProducts: lowStockProducts.slice(0, 5),
+      deliveredRevenue,
+      totalSalesValue,
+      manuelShare: deliveredRevenue * 0.45,
+      lauraShare: deliveredRevenue * 0.55,
+      recentOrders: allOrders.slice(0, 6),
+      lowStockProducts: lowStockProducts.slice(0, 6),
     })
 
     setLoading(false)
   }
+
+  const topCards = useMemo(
+    () => [
+      {
+        label: 'Vendite consegnate',
+        value: loading ? '...' : formatCurrency(stats.deliveredRevenue),
+        info: 'Ricavo calcolato sugli ordini consegnati',
+        tone: 'primary',
+      },
+      {
+        label: 'Quota Manuel 45%',
+        value: loading ? '...' : formatCurrency(stats.manuelShare),
+        info: 'Ripartizione automatica ricavi',
+        tone: 'manuel',
+      },
+      {
+        label: 'Quota Laura 55%',
+        value: loading ? '...' : formatCurrency(stats.lauraShare),
+        info: 'Ripartizione automatica ricavi',
+        tone: 'laura',
+      },
+      {
+        label: 'Valore ordini attivi',
+        value: loading ? '...' : formatCurrency(stats.totalSalesValue),
+        info: 'Totale ordini non annullati',
+        tone: 'neutral',
+      },
+      {
+        label: 'Clienti',
+        value: loading ? '...' : stats.customers,
+        info: 'Anagrafiche registrate',
+        tone: 'neutral',
+      },
+      {
+        label: 'Prodotti',
+        value: loading ? '...' : stats.products,
+        info: 'Articoli a magazzino',
+        tone: 'neutral',
+      },
+      {
+        label: 'Ordini aperti',
+        value: loading ? '...' : stats.activeOrders,
+        info: 'Ordini non annullati',
+        tone: 'neutral',
+      },
+      {
+        label: 'Scorte basse',
+        value: loading ? '...' : stats.lowStock,
+        info: 'Prodotti sotto soglia minima',
+        tone: 'warning',
+      },
+    ],
+    [loading, stats]
+  )
 
   function getCustomerLabel(customer) {
     if (!customer) return '—'
@@ -90,30 +162,35 @@ export default function Dashboard() {
     <div className="pageWrap">
       {error ? <div className="errorBox">{error}</div> : null}
 
-      <div className="statsGrid">
-        <div className="statCard">
-          <p className="statLabel">Ordini attivi</p>
-          <h3 className="statValue">{loading ? '...' : stats.activeOrders}</h3>
-          <span className="statInfo">Ordini non annullati</span>
+      <section className="dashboardHero card">
+        <div>
+          <p className="dashboardEyebrow">Panoramica vendite</p>
+          <h2>Dashboard Inkpress</h2>
+          <p className="dashboardHeroText">
+            Controllo immediato di vendite, ricavi ripartiti e prodotti da riordinare.
+          </p>
         </div>
 
-        <div className="statCard">
-          <p className="statLabel">Clienti</p>
-          <h3 className="statValue">{loading ? '...' : stats.customers}</h3>
-          <span className="statInfo">Anagrafiche registrate</span>
+        <div className="dashboardHeroTotals">
+          <div className="heroTotalCard">
+            <span>Totale consegnato</span>
+            <strong>{loading ? '...' : formatCurrency(stats.deliveredRevenue)}</strong>
+          </div>
+          <div className="heroTotalCard light">
+            <span>Ordini gestiti</span>
+            <strong>{loading ? '...' : stats.activeOrders}</strong>
+          </div>
         </div>
+      </section>
 
-        <div className="statCard">
-          <p className="statLabel">Prodotti</p>
-          <h3 className="statValue">{loading ? '...' : stats.products}</h3>
-          <span className="statInfo">Articoli a magazzino</span>
-        </div>
-
-        <div className="statCard">
-          <p className="statLabel">Scorte basse</p>
-          <h3 className="statValue">{loading ? '...' : stats.lowStock}</h3>
-          <span className="statInfo">Prodotti sotto soglia</span>
-        </div>
+      <div className="statsGrid enhancedStatsGrid">
+        {topCards.map((card) => (
+          <div key={card.label} className={`statCard tone-${card.tone}`}>
+            <p className="statLabel">{card.label}</p>
+            <h3 className="statValue">{card.value}</h3>
+            <span className="statInfo">{card.info}</span>
+          </div>
+        ))}
       </div>
 
       <div className="dashboardContentGrid">
@@ -138,10 +215,8 @@ export default function Dashboard() {
                   </div>
 
                   <div className="dashboardListRight">
-                    <div className="dashboardListPrice">
-                      € {Number(order.total || 0).toFixed(2)}
-                    </div>
-                    <div className="dashboardListSub">{order.status}</div>
+                    <div className="dashboardListPrice">{formatCurrency(order.total)}</div>
+                    <div className={`miniStatus ${order.status || 'neutral'}`}>{order.status}</div>
                   </div>
                 </div>
               ))}

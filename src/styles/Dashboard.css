@@ -1,7 +1,73 @@
+.dashboardHero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 26px;
+  margin-bottom: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(109, 124, 255, 0.24), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(109, 124, 255, 0.08));
+}
+
+.dashboardEyebrow {
+  margin: 0 0 8px;
+  color: #aebdff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.dashboardHero h2 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.dashboardHeroText {
+  margin: 12px 0 0;
+  max-width: 640px;
+  color: #cbd7f5;
+}
+
+.dashboardHeroTotals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 14px;
+  width: min(100%, 460px);
+}
+
+.heroTotalCard {
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.heroTotalCard.light {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.heroTotalCard span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.heroTotalCard strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.65rem;
+}
+
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
+}
+
+.enhancedStatsGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .statCard {
@@ -11,6 +77,22 @@
   padding: 22px;
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
+}
+
+.tone-primary {
+  background: linear-gradient(180deg, rgba(109, 124, 255, 0.18), rgba(255, 255, 255, 0.04));
+}
+
+.tone-manuel {
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.16), rgba(255, 255, 255, 0.04));
+}
+
+.tone-laura {
+  background: linear-gradient(180deg, rgba(236, 72, 153, 0.16), rgba(255, 255, 255, 0.04));
+}
+
+.tone-warning {
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.16), rgba(255, 255, 255, 0.04));
 }
 
 .statLabel {
@@ -23,6 +105,7 @@
   margin: 0;
   font-size: 2rem;
   font-weight: 800;
+  line-height: 1.1;
 }
 
 .statInfo {
@@ -36,31 +119,6 @@
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   gap: 18px;
-}
-
-@media (max-width: 1100px) {
-  .statsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .dashboardContentGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 560px) {
-  .statsGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .statValue {
-    font-size: 1.7rem;
-  }
-
-  .statCard {
-    padding: 18px;
-    border-radius: 20px;
-  }
 }
 
 .dashboardList {
@@ -100,7 +158,83 @@
   color: #dce5ff;
 }
 
-@media (max-width: 560px) {
+.miniStatus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.miniStatus.confermato {
+  background: rgba(59, 130, 246, 0.16);
+  color: #dbeafe;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.miniStatus.in_stampa {
+  background: rgba(168, 85, 247, 0.16);
+  color: #f3e8ff;
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.miniStatus.pronto {
+  background: rgba(245, 158, 11, 0.16);
+  color: #fef3c7;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.miniStatus.consegnato {
+  background: rgba(34, 197, 94, 0.16);
+  color: #dcfce7;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.miniStatus.preventivo {
+  background: rgba(148, 163, 184, 0.16);
+  color: #e2e8f0;
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+.miniStatus.annullato {
+  background: rgba(239, 68, 68, 0.16);
+  color: #fee2e2;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+@media (max-width: 1240px) {
+  .enhancedStatsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboardContentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1100px) {
+  .dashboardHero {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dashboardHeroTotals {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .enhancedStatsGrid,
+  .dashboardHeroTotals {
+    grid-template-columns: 1fr;
+  }
+
   .dashboardListItem {
     flex-direction: column;
     align-items: flex-start;
@@ -108,5 +242,15 @@
 
   .dashboardListRight {
     text-align: left;
+  }
+
+  .statValue,
+  .heroTotalCard strong {
+    font-size: 1.45rem;
+  }
+
+  .dashboardHero {
+    padding: 20px;
+    border-radius: 22px;
   }
 }

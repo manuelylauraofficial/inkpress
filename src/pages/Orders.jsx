@@ -365,12 +365,16 @@ const { error } = await supabase.rpc(rpcName, rpcPayload)
 
   function getStatusClass(status) {
     switch (status) {
+      case 'preventivo':
+        return 'statusBadge quote'
       case 'confermato':
-      case 'consegnato':
-        return 'statusBadge active'
+        return 'statusBadge confirmed'
       case 'in_stampa':
+        return 'statusBadge printing'
       case 'pronto':
-        return 'statusBadge pending'
+        return 'statusBadge ready'
+      case 'consegnato':
+        return 'statusBadge delivered'
       case 'annullato':
         return 'statusBadge inactive'
       default:
