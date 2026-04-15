@@ -1,4 +1,6 @@
 import { NavLink } from 'react-router-dom'
+import { Sun, Moon, LogOut } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 import '../styles/Sidebar.css'
 
 const menuItems = [
@@ -9,7 +11,13 @@ const menuItems = [
   { to: '/movimenti', label: 'Movimenti', icon: '📦' },
 ]
 
-export default function Sidebar({ open, onClose }) {
+export default function Sidebar({ open, onClose, theme = 'dark', onToggleTheme }) {
+  const isLight = theme === 'light'
+
+  async function handleLogout() {
+    await supabase.auth.signOut()
+  }
+
   return (
     <>
       <div className={open ? 'sidebarOverlay visible' : 'sidebarOverlay'} onClick={onClose} />
@@ -36,6 +44,18 @@ export default function Sidebar({ open, onClose }) {
             </NavLink>
           ))}
         </nav>
+
+        <div className="sidebarActions">
+          <button className="sidebarActionBtn" onClick={onToggleTheme} type="button">
+            {isLight ? <Moon size={18} /> : <Sun size={18} />}
+            <span>{isLight ? 'Tema scuro' : 'Tema chiaro'}</span>
+          </button>
+
+          <button className="sidebarActionBtn" onClick={handleLogout} type="button">
+            <LogOut size={18} />
+            <span>Logout</span>
+          </button>
+        </div>
       </aside>
     </>
   )

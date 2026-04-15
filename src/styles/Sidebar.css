@@ -116,3 +116,32 @@
     pointer-events: auto;
   }
 }
+
+.sidebarActions {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebarActionBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 15px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.sidebarActionBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(109, 124, 255, 0.35);
+}

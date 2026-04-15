@@ -93,18 +93,18 @@ export default function Orders() {
   }
 
   function resetOrderForm() {
-  setEditingOrderId(null)
-  setForm({
-    customer_id: '',
-    status: 'confermato',
-    order_date: new Date().toISOString().slice(0, 10),
-    delivery_date: '',
-    notes: '',
-    discount_type: 'fixed',
-    discount_value: '',
-  })
-  setRows([{ ...emptyRow }])
-}
+    setEditingOrderId(null)
+    setForm({
+      customer_id: '',
+      status: 'confermato',
+      order_date: new Date().toISOString().slice(0, 10),
+      delivery_date: '',
+      notes: '',
+      discount_type: 'fixed',
+      discount_value: '',
+    })
+    setRows([{ ...emptyRow }])
+  }
 
   function handleOpenNew() {
     resetOrderForm()
@@ -279,7 +279,7 @@ export default function Orders() {
         p_items: cleanItems,
       }
 
-const { error } = await supabase.rpc(rpcName, rpcPayload)
+    const { error } = await supabase.rpc(rpcName, rpcPayload)
 
     if (error) {
       setError(error.message)
@@ -382,6 +382,168 @@ const { error } = await supabase.rpc(rpcName, rpcPayload)
     }
   }
 
+  const priorityStatuses = ['preventivo', 'confermato', 'in_stampa', 'pronto']
+  const completedStatuses = ['consegnato', 'annullato']
+
+  const priorityOrders = filteredOrders.filter((order) =>
+    priorityStatuses.includes(order.status)
+  )
+
+  const completedOrders = filteredOrders.filter((order) =>
+    completedStatuses.includes(order.status)
+  )
+
+  function getStatusLabel(status) {
+    return (
+      orderStatuses.find((item) => item.value === status)?.label || status || '—'
+    )
+  }
+
+  function formatDate(date) {
+    if (!date) return '—'
+    const d = new Date(date)
+    if (Number.isNaN(d.getTime())) return date
+    return d.toLocaleDateString('it-IT')
+  }
+
+  function renderOrderCard(order) {
+    return (
+      <article className="orderMobileCard" key={order.id}>
+        <div className="orderMobileCard__top">
+          <div>
+            <div className="orderMobileCard__code">{order.order_number}</div>
+            <div className="orderMobileCard__customer">
+              {getCustomerLabel(order.customers)}
+            </div>
+          </div>
+
+          <span className={getStatusClass(order.status)}>
+            {getStatusLabel(order.status)}
+          </span>
+        </div>
+
+        <div className="orderMobileCard__grid">
+          <div className="orderInfoBox">
+            <span>Data ordine</span>
+            <strong>{formatDate(order.order_date)}</strong>
+          </div>
+
+          <div className="orderInfoBox">
+            <span>Consegna</span>
+            <strong>{formatDate(order.delivery_date)}</strong>
+          </div>
+
+          <div className="orderInfoBox orderInfoBox--total">
+            <span>Totale</span>
+            <strong>€ {Number(order.total || 0).toFixed(2)}</strong>
+          </div>
+        </div>
+
+        <div className="orderMobileCard__actions">
+          <button
+            className="secondaryBtn smallBtn"
+            onClick={() => handleOpenDetails(order)}
+          >
+            Dettagli
+          </button>
+
+          {order.status !== 'annullato' ? (
+            <button
+              className="secondaryBtn smallBtn"
+              onClick={() => handleOpenEdit(order)}
+            >
+              Modifica
+            </button>
+          ) : null}
+
+          {order.status !== 'annullato' ? (
+            <button
+              className="dangerBtn smallBtn"
+              onClick={() => handleCancelOrder(order.id)}
+            >
+              Annulla
+            </button>
+          ) : null}
+        </div>
+      </article>
+    )
+  }
+
+  function renderOrdersTable(list) {
+    return (
+      <div className="tableWrap ordersDesktopView">
+        <table className="dataTable">
+          <thead>
+            <tr>
+              <th>Ordine</th>
+              <th>Cliente</th>
+              <th>Stato</th>
+              <th>Date</th>
+              <th>Totale</th>
+              <th>Azioni</th>
+            </tr>
+          </thead>
+          <tbody>
+            {list.map((order) => (
+              <tr key={order.id}>
+                <td>
+                  <div className="tableMain">{order.order_number}</div>
+                </td>
+                <td>
+                  <div className="tableMain">{getCustomerLabel(order.customers)}</div>
+                </td>
+                <td>
+                  <span className={getStatusClass(order.status)}>
+                    {getStatusLabel(order.status)}
+                  </span>
+                </td>
+                <td>
+                  <div className="tableMain">{formatDate(order.order_date)}</div>
+                  <div className="tableSub">
+                    Consegna: {formatDate(order.delivery_date)}
+                  </div>
+                </td>
+                <td>
+                  <div className="tableMain">
+                    € {Number(order.total || 0).toFixed(2)}
+                  </div>
+                </td>
+                <td>
+                  <div className="rowActions">
+                    <button
+                      className="secondaryBtn smallBtn"
+                      onClick={() => handleOpenDetails(order)}
+                    >
+                      Dettagli
+                    </button>
+
+                    {order.status !== 'annullato' ? (
+                      <button
+                        className="secondaryBtn smallBtn"
+                        onClick={() => handleOpenEdit(order)}
+                      >
+                        Modifica
+                      </button>
+                    ) : null}
+
+                    {order.status !== 'annullato' ? (
+                      <button
+                        className="dangerBtn smallBtn"
+                        onClick={() => handleCancelOrder(order.id)}
+                      >
+                        Annulla
+                      </button>
+                    ) : null}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
   return (
     <div className="pageWrap">
       <div className="sectionTop">
@@ -428,52 +590,48 @@ const { error } = await supabase.rpc(rpcName, rpcPayload)
         ) : filteredOrders.length === 0 ? (
           <div className="emptyState">Nessun ordine trovato.</div>
         ) : (
-          <div className="tableWrap">
-            <table className="dataTable">
-              <thead>
-                <tr>
-                  <th>Ordine</th>
-                  <th>Cliente</th>
-                  <th>Stato</th>
-                  <th>Date</th>
-                  <th>Totale</th>
-                  <th>Azioni</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrders.map((order) => (
-                  <tr key={order.id}>
-                    <td><div className="tableMain">{order.order_number}</div></td>
-                    <td><div className="tableMain">{getCustomerLabel(order.customers)}</div></td>
-                    <td><span className={getStatusClass(order.status)}>{order.status}</span></td>
-                    <td>
-                      <div className="tableMain">{order.order_date || '—'}</div>
-                      <div className="tableSub">Consegna: {order.delivery_date || '—'}</div>
-                    </td>
-                    <td><div className="tableMain">€ {Number(order.total || 0).toFixed(2)}</div></td>
-                    <td>
-                      <div className="rowActions">
-                        <button className="secondaryBtn smallBtn" onClick={() => handleOpenDetails(order)}>
-                          Dettagli
-                        </button>
+          <div className="ordersSections">
+            <section className="ordersGroup ordersGroup--priority">
+              <div className="ordersGroup__header">
+                <div>
+                  <h3>Ordini aperti e in lavorazione</h3>
+                  <p>Preventivi, confermati e ordini attualmente in stampa.</p>
+                </div>
+                <div className="ordersGroup__count">{priorityOrders.length}</div>
+              </div>
 
-                        {order.status !== 'annullato' ? (
-                          <button className="secondaryBtn smallBtn" onClick={() => handleOpenEdit(order)}>
-                            Modifica
-                          </button>
-                        ) : null}
+              {priorityOrders.length === 0 ? (
+                <div className="emptyState">Nessun ordine aperto o in stampa.</div>
+              ) : (
+                <>
+                  {renderOrdersTable(priorityOrders)}
+                  <div className="ordersMobileList">
+                    {priorityOrders.map((order) => renderOrderCard(order))}
+                  </div>
+                </>
+              )}
+            </section>
 
-                        {order.status !== 'annullato' ? (
-                          <button className="dangerBtn smallBtn" onClick={() => handleCancelOrder(order.id)}>
-                            Annulla
-                          </button>
-                        ) : null}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <section className="ordersGroup">
+              <div className="ordersGroup__header">
+                <div>
+                  <h3>Ordini completati e finiti</h3>
+                  <p>Ordini pronti, consegnati o annullati.</p>
+                </div>
+                <div className="ordersGroup__count">{completedOrders.length}</div>
+              </div>
+
+              {completedOrders.length === 0 ? (
+                <div className="emptyState">Nessun ordine completato.</div>
+              ) : (
+                <>
+                  {renderOrdersTable(completedOrders)}
+                  <div className="ordersMobileList">
+                    {completedOrders.map((order) => renderOrderCard(order))}
+                  </div>
+                </>
+              )}
+            </section>
           </div>
         )}
       </section>
