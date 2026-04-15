@@ -145,3 +145,36 @@
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(109, 124, 255, 0.35);
 }
+
+@media (max-width: 640px) {
+  .sidebar {
+    width: min(300px, 84vw);
+    padding: 18px 14px;
+  }
+
+  .brandBox {
+    padding: 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+
+  .brandLogo {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+  }
+
+  .brandTitle {
+    font-size: 1.2rem;
+  }
+
+  .brandSubtitle {
+    font-size: 0.9rem;
+  }
+
+  .navItem,
+  .sidebarActionBtn {
+    padding: 14px;
+    border-radius: 16px;
+  }
+}

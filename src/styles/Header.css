@@ -24,7 +24,7 @@
 
 .pageTitle {
   margin: 0;
-  font-size: clamp(2rem, 2.8vw, 3rem);
+  font-size: clamp(1.7rem, 2.8vw, 3rem);
   line-height: 1;
   color: var(--text);
 }
@@ -33,6 +33,7 @@
   margin: 8px 0 0;
   color: var(--muted);
   font-size: 1rem;
+  line-height: 1.45;
 }
 
 .sidebarToggleBtn {
@@ -61,11 +62,42 @@
 }
 
 @media (max-width: 720px) {
+  .topHeader {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
   .headerLeft {
     align-items: flex-start;
+    gap: 12px;
+  }
+
+  .pageTitle {
+    font-size: 1.9rem;
   }
 
   .pageSubtitle {
-    font-size: 0.95rem;
+    font-size: 0.94rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .topHeader {
+    margin: 12px 14px 14px;
+    padding: 14px;
+  }
+
+  .pageTitle {
+    font-size: 1.65rem;
+  }
+
+  .pageSubtitle {
+    font-size: 0.9rem;
+  }
+
+  .sidebarToggleBtn {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
   }
 }

@@ -254,3 +254,81 @@
   color: #dce5ff;
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
+
+@media (max-width: 920px) {
+  .toolbar {
+    flex-direction: column;
+  }
+
+  .rowActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rowActions .smallBtn,
+  .rowActions .secondaryBtn,
+  .rowActions .dangerBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .modalOverlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  .modalCard {
+    border-radius: 22px;
+    padding: 18px;
+    max-height: calc(100vh - 12px);
+    overflow-y: auto;
+  }
+
+  .largeModal {
+    max-width: 100%;
+  }
+
+  .formActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .formActions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .modalOverlay {
+    padding: 8px;
+  }
+
+  .modalCard {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .field label {
+    font-size: 0.9rem;
+  }
+
+  .field input,
+  .field textarea,
+  .field select,
+  .searchInput {
+    min-height: 48px;
+    padding: 13px 14px;
+  }
+
+  .smallBtn {
+    width: 100%;
+  }
+
+  .dataTable {
+    min-width: 760px;
+  }
+
+  .tableWrap {
+    -webkit-overflow-scrolling: touch;
+  }
+}

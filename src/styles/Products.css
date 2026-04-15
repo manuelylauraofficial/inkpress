@@ -471,3 +471,63 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 640px) {
+  .productCard {
+    border-radius: 18px;
+  }
+
+  .productImageWrap {
+    height: 190px;
+  }
+
+  .productBody {
+    padding: 14px;
+  }
+
+  .productTitle {
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  .productSku {
+    font-size: 0.88rem;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .productMeta {
+    gap: 6px;
+  }
+
+  .productMeta span {
+    font-size: 0.8rem;
+  }
+
+  .inventorySummaryCard {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .inventorySummaryValue {
+    font-size: 1.55rem;
+  }
+
+  .inventoryGroupCounter {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 14px;
+  }
+
+  .classificationHint {
+    padding: 12px 14px;
+    font-size: 0.93rem;
+    line-height: 1.45;
+  }
+
+  .formActions {
+    position: static;
+    background: transparent;
+    padding-top: 0;
+  }
+}

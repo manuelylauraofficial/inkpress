@@ -68,3 +68,18 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 640px) {
+  .movementsToolbar {
+    gap: 10px;
+  }
+
+  .movementFilter {
+    min-height: 48px;
+    padding: 13px 42px 13px 14px;
+  }
+
+  .movementBadge {
+    font-size: 0.78rem;
+  }
+}

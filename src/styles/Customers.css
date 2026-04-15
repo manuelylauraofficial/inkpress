@@ -38,7 +38,9 @@
 
 .customerStatCard strong {
   font-size: 1.15rem;
-  color: #e8eefc;
+  color: var(--text);
+  line-height: 1.25;
+  word-break: break-word;
 }
 
 .customerInfoGrid {
@@ -52,6 +54,7 @@
   border-radius: 20px;
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.03);
+  min-width: 0;
 }
 
 .customerInfoCard h4 {
@@ -74,11 +77,14 @@
 
 .customerInfoList span {
   color: var(--muted);
+  min-width: 0;
 }
 
 .customerInfoList strong {
   color: var(--text);
   text-align: right;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .customerNotesBox {
@@ -88,6 +94,7 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
   color: #dce5ff;
   white-space: pre-wrap;
+  line-height: 1.55;
 }
 
 .customerInnerHeader {
@@ -121,8 +128,13 @@
     align-items: stretch;
   }
 
+  .customerDetailsWrap {
+    gap: 14px;
+  }
+
   .customerInfoList div {
     flex-direction: column;
+    gap: 6px;
   }
 
   .customerInfoList strong {
@@ -130,8 +142,48 @@
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 640px) {
+  .customerDetailsModal {
+    width: 100%;
+    max-width: 100%;
+  }
+
   .customerStatsGrid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .customerStatCard,
+  .customerInfoCard {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .customerStatCard strong {
+    font-size: 1.05rem;
+  }
+
+  .customerInfoCard h4 {
+    font-size: 0.96rem;
+    margin-bottom: 12px;
+  }
+
+  .customerInfoList {
+    gap: 10px;
+  }
+
+  .customerInfoList div {
+    padding-bottom: 8px;
+  }
+
+  .customerInfoList span,
+  .customerInfoList strong {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .customerNotesBox {
+    padding: 12px 14px;
+    font-size: 0.94rem;
   }
 }
