@@ -20,19 +20,19 @@
 }
 
 .toastItem.success {
-  background: rgba(52, 211, 153, 0.16);
-  color: #d6fff0;
-  border-color: rgba(52, 211, 153, 0.28);
+  background: color-mix(in srgb, var(--success) 16%, var(--panel));
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--success) 28%, transparent);
 }
 
 .toastItem.error {
-  background: rgba(251, 113, 133, 0.16);
-  color: #ffd7df;
-  border-color: rgba(251, 113, 133, 0.28);
+  background: color-mix(in srgb, var(--danger) 16%, var(--panel));
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--danger) 28%, transparent);
 }
 
 .toastItem.info {
-  background: rgba(109, 124, 255, 0.18);
-  color: #e8eefc;
-  border-color: rgba(109, 124, 255, 0.28);
+  background: color-mix(in srgb, var(--primary) 18%, var(--panel));
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--primary) 28%, transparent);
 }

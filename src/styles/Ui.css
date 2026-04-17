@@ -38,12 +38,13 @@
 .dataTable td {
   text-align: left;
   padding: 16px 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
   vertical-align: top;
 }
 
+
 .dataTable th {
-  color: #cdd8f3;
+  color: var(--muted);
   font-size: 0.92rem;
   font-weight: 700;
 }
@@ -72,26 +73,27 @@
 }
 
 .dangerBtn {
-  background: rgba(251, 113, 133, 0.12);
-  color: #ffd7df;
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
   padding: 12px 18px;
   border-radius: 14px;
   font-weight: 700;
-  border: 1px solid rgba(251, 113, 133, 0.28);
+  border: 1px solid color-mix(in srgb, var(--danger) 28%, transparent);
 }
 
 .successBox {
-  border: 1px solid rgba(52, 211, 153, 0.28);
-  background: rgba(52, 211, 153, 0.12);
-  color: #d6fff0;
+  border: 1px solid color-mix(in srgb, var(--success) 28%, transparent);
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  color: var(--text);
   padding: 12px 14px;
   border-radius: 14px;
 }
 
+
 .errorBox {
-  border: 1px solid rgba(251, 113, 133, 0.35);
-  background: rgba(251, 113, 133, 0.12);
-  color: #ffd7df;
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--text);
   padding: 12px 14px;
   border-radius: 14px;
 }
@@ -99,7 +101,7 @@
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(3, 8, 20, 0.7);
+  background: var(--overlay);
   backdrop-filter: blur(8px);
   display: grid;
   place-items: center;
@@ -109,7 +111,7 @@
 
 .modalCard {
   width: 100%;
-  background: #11182d;
+  background: var(--modal-bg);
   border: 1px solid var(--border);
   border-radius: 24px;
   box-shadow: var(--shadow);
@@ -135,7 +137,7 @@
 .field label {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #d9e3fb;
+  color: var(--heading-soft);
 }
 
 .field input,
@@ -145,7 +147,7 @@
   padding: 14px 16px;
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface);
   color: var(--text);
   outline: none;
 }
@@ -183,26 +185,26 @@
 .authForm input,
 .field input,
 .field textarea {
-  color-scheme: dark;
-    width: 100%;
-    padding: 14px 16px;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.04);
-    color: var(--text);
-    outline: none;
+  color-scheme: light;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
 }
 
 .field select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-color: #1b2540;
+  background-color: var(--input-bg);
   color: var(--text);
   padding-right: 46px;
   background-image:
-    linear-gradient(45deg, transparent 50%, #cfd8f6 50%),
-    linear-gradient(135deg, #cfd8f6 50%, transparent 50%);
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
   background-position:
     calc(100% - 22px) calc(50% - 3px),
     calc(100% - 16px) calc(50% - 3px);
@@ -211,13 +213,13 @@
 }
 
 .field select option {
-  background: #18233f;
-  color: #e8eefc;
+  background: var(--input-bg);
+  color: var(--text);
 }
 
 .field select option:checked,
 .field select option:hover {
-  background: #2a5fbf;
+  background: var(--primary);
   color: #ffffff;
 }
 
@@ -250,9 +252,9 @@
 }
 
 .statusBadge.neutral {
-  background: rgba(255, 255, 255, 0.06);
-  color: #dce5ff;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--surface-2);
+  color: var(--text-soft);
+  border: 1px solid var(--border);
 }
 
 @media (max-width: 920px) {

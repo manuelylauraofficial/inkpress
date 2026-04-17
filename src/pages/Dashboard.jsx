@@ -195,7 +195,7 @@ export default function Dashboard() {
 
       <div className="dashboardContentGrid">
         <section className="card">
-          <div className="cardHeader">
+          <div className="cardHeader customerFormModal__header">
             <h3>Ordini recenti</h3>
           </div>
 
@@ -225,7 +225,7 @@ export default function Dashboard() {
         </section>
 
         <section className="card">
-          <div className="cardHeader">
+          <div className="cardHeader customerFormModal__header">
             <h3>Prodotti con scorte basse</h3>
           </div>
 

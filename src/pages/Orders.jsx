@@ -411,10 +411,10 @@ export default function Orders() {
       <article className="orderMobileCard" key={order.id}>
         <div className="orderMobileCard__top">
           <div>
-            <div className="orderMobileCard__code">{order.order_number}</div>
             <div className="orderMobileCard__customer">
               {getCustomerLabel(order.customers)}
             </div>
+            <div className="orderMobileCard__code">{order.order_number}</div>
           </div>
 
           <span className={getStatusClass(order.status)}>

@@ -187,3 +187,85 @@
     font-size: 0.94rem;
   }
 }
+
+.customerFormModal {
+  width: min(980px, calc(100vw - 40px));
+  max-width: min(980px, calc(100vw - 40px));
+}
+
+.customerFormGrid {
+  gap: 18px;
+}
+
+@media (max-width: 640px) {
+  .customerFormModal {
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+    margin: 6px;
+    border-radius: 20px;
+  }
+
+  .customerFormModal__header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .customerFormModal__header .secondaryBtn {
+    width: 100%;
+  }
+
+  .customerFormGrid {
+    gap: 14px;
+  }
+
+  .customerFormModal .field input,
+  .customerFormModal .field textarea {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .customerFormModal__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .customerFormModal__actions .secondaryBtn,
+  .customerFormModal__actions .primaryBtn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .modalOverlay .modalCard.customerFormModal {
+    width: calc(100vw - 8px) !important;
+    max-width: calc(100vw - 8px) !important;
+    min-width: calc(100vw - 8px) !important;
+    margin: 4px auto !important;
+    border-radius: 20px;
+  }
+
+  .modalOverlay .modalCard.customerFormModal .cardHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .modalOverlay .modalCard.customerFormModal .cardHeader .secondaryBtn {
+    width: 100%;
+  }
+
+  .modalOverlay .modalCard.customerFormModal .formActions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modalOverlay .modalCard.customerFormModal .formActions .secondaryBtn,
+  .modalOverlay .modalCard.customerFormModal .formActions .primaryBtn {
+    width: 100%;
+  }
+}

@@ -44,9 +44,9 @@
   padding: 0 16px;
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface);
   font-weight: 800;
-  color: #dce5ff;
+  color: var(--text-soft);
 }
 
 .stockWarning {
@@ -105,11 +105,7 @@
 }
 
 .orderNotesBox {
-  padding: 16px;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.03);
-  color: #dce5ff;
+  color: var(--text-soft);
 }
 
 .detailsActions {
@@ -154,7 +150,7 @@
   padding: 14px 16px;
   border-radius: 14px;
   border: 1px solid var(--border);
-  background-color: #1b2540;
+  background-color: var(--input-bg);
   color: var(--text);
   outline: none;
 }
@@ -182,9 +178,10 @@
 .totalRow {
   padding-top: 10px;
   margin-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
   font-size: 18px;
 }
+
 .statusBadge.quote {
   background: rgba(148, 163, 184, 0.16);
   color: #e2e8f0;
@@ -225,15 +222,13 @@
   border: 1px solid var(--border);
   border-radius: 24px;
   padding: 18px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  background: linear-gradient(180deg, var(--surface), transparent);
 }
 
 .ordersGroup--priority {
-  border-color: rgba(109, 124, 255, 0.35);
-  background:
-    linear-gradient(180deg, rgba(109, 124, 255, 0.12), rgba(255, 255, 255, 0.03));
-  box-shadow: 0 18px 40px rgba(23, 30, 56, 0.22);
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 12%, transparent), transparent);
+  box-shadow: var(--shadow);
 }
 
 .ordersGroup__header {
@@ -342,8 +337,8 @@
 }
 
 .orderInfoBox--total {
-  background: rgba(109, 124, 255, 0.1);
-  border-color: rgba(109, 124, 255, 0.24);
+  background: var(--surface-3);
+  border-color: color-mix(in srgb, var(--primary) 24%, transparent);
 }
 
 .orderMobileCard__actions {
@@ -449,4 +444,20 @@
   .orderSummaryBox strong {
     font-size: 1.1rem;
   }
+}
+
+.orderMobileCard__customer {
+  margin-top: 0;
+  margin-bottom: 4px;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.orderMobileCard__code {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.2;
 }

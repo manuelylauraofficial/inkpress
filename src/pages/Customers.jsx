@@ -325,100 +325,103 @@ export default function Customers() {
       </section>
 
       {openModal ? (
-        <div className="modalOverlay" onMouseDown={() => setOpenModal(false)}>
-          <div className="modalCard largeModal" onMouseDown={(e) => e.stopPropagation()}>
-            <div className="cardHeader">
-              <h3>{editingId ? 'Modifica cliente' : 'Nuovo cliente'}</h3>
-              <button className="secondaryBtn" onClick={() => setOpenModal(false)}>
-                Chiudi
-              </button>
-            </div>
+  <div className="modalOverlay" onMouseDown={() => setOpenModal(false)}>
+    <div
+      className="modalCard largeModal customerFormModal"
+      onMouseDown={(e) => e.stopPropagation()}
+    >
+      <div className="cardHeader customerFormModal__header">
+        <h3>{editingId ? 'Modifica cliente' : 'Nuovo cliente'}</h3>
+        <button className="closeBtn" onClick={() => setOpenModal(false)}>
+          Chiudi
+        </button>
+      </div>
 
-            <form onSubmit={handleSubmit} className="formGrid">
-              <div className="field">
-                <label>Ragione sociale</label>
-                <input name="company_name" value={form.company_name} onChange={handleChange} />
-              </div>
-
-              <div className="field">
-                <label>Nome</label>
-                <input name="first_name" value={form.first_name} onChange={handleChange} />
-              </div>
-
-              <div className="field">
-                <label>Cognome</label>
-                <input name="last_name" value={form.last_name} onChange={handleChange} />
-              </div>
-
-              <div className="field">
-                <label>Partita IVA</label>
-                <input name="vat_number" value={form.vat_number} onChange={handleChange} />
-              </div>
-
-              <div className="field">
-                <label>Codice fiscale</label>
-                <input name="tax_code" value={form.tax_code} onChange={handleChange} />
-              </div>
-
-              <div className="field">
-                <label>Email</label>
-                <input name="email" type="email" value={form.email} onChange={handleChange} />
-              </div>
-
-              <div className="field">
-                <label>Telefono</label>
-                <input name="phone" value={form.phone} onChange={handleChange} />
-              </div>
-
-              <div className="field">
-                <label>Indirizzo</label>
-                <input name="address" value={form.address} onChange={handleChange} />
-              </div>
-
-              <div className="field">
-                <label>Città</label>
-                <input name="city" value={form.city} onChange={handleChange} />
-              </div>
-
-              <div className="field">
-                <label>CAP</label>
-                <input name="postal_code" value={form.postal_code} onChange={handleChange} />
-              </div>
-
-              <div className="field">
-                <label>Provincia</label>
-                <input name="province" value={form.province} onChange={handleChange} />
-              </div>
-
-              <div className="field fieldFull">
-                <label>Note</label>
-                <textarea
-                  name="notes"
-                  rows="4"
-                  value={form.notes}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="formActions fieldFull">
-                <button type="button" className="secondaryBtn" onClick={() => setOpenModal(false)}>
-                  Annulla
-                </button>
-                <button type="submit" className="primaryBtn" disabled={saving}>
-                  {saving ? 'Salvataggio...' : editingId ? 'Salva modifiche' : 'Crea cliente'}
-                </button>
-              </div>
-            </form>
-          </div>
+      <form onSubmit={handleSubmit} className="formGrid customerFormGrid">
+        <div className="field">
+          <label>Ragione sociale</label>
+          <input name="company_name" value={form.company_name} onChange={handleChange} />
         </div>
-      ) : null}
+
+        <div className="field">
+          <label>Nome</label>
+          <input name="first_name" value={form.first_name} onChange={handleChange} />
+        </div>
+
+        <div className="field">
+          <label>Cognome</label>
+          <input name="last_name" value={form.last_name} onChange={handleChange} />
+        </div>
+
+        <div className="field">
+          <label>Partita IVA</label>
+          <input name="vat_number" value={form.vat_number} onChange={handleChange} />
+        </div>
+
+        <div className="field">
+          <label>Codice fiscale</label>
+          <input name="tax_code" value={form.tax_code} onChange={handleChange} />
+        </div>
+
+        <div className="field">
+          <label>Email</label>
+          <input name="email" type="email" value={form.email} onChange={handleChange} />
+        </div>
+
+        <div className="field">
+          <label>Telefono</label>
+          <input name="phone" value={form.phone} onChange={handleChange} />
+        </div>
+
+        <div className="field">
+          <label>Indirizzo</label>
+          <input name="address" value={form.address} onChange={handleChange} />
+        </div>
+
+        <div className="field">
+          <label>Città</label>
+          <input name="city" value={form.city} onChange={handleChange} />
+        </div>
+
+        <div className="field">
+          <label>CAP</label>
+          <input name="postal_code" value={form.postal_code} onChange={handleChange} />
+        </div>
+
+        <div className="field">
+          <label>Provincia</label>
+          <input name="province" value={form.province} onChange={handleChange} />
+        </div>
+
+        <div className="field fieldFull">
+          <label>Note</label>
+          <textarea
+            name="notes"
+            rows="4"
+            value={form.notes}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="formActions fieldFull customerFormModal__actions">
+          <button type="button" className="secondaryBtn" onClick={() => setOpenModal(false)}>
+            Annulla
+          </button>
+          <button type="submit" className="primaryBtn" disabled={saving}>
+            {saving ? 'Salvataggio...' : editingId ? 'Salva modifiche' : 'Crea cliente'}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+) : null}
 
       {detailsOpen && selectedCustomer ? (
         <div className="modalOverlay" onMouseDown={() => setDetailsOpen(false)}>
           <div className="modalCard customerDetailsModal" onMouseDown={(e) => e.stopPropagation()}>
-            <div className="cardHeader">
+            <div className="cardHeader customerFormModal__header">
               <h3>Dettaglio cliente</h3>
-              <button className="secondaryBtn" onClick={() => setDetailsOpen(false)}>
+              <button className="closeBtn" onClick={() => setDetailsOpen(false)}>
                 Chiudi
               </button>
             </div>

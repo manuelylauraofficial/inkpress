@@ -10,8 +10,16 @@
   --panel: rgba(18, 27, 50, 0.88);
   --panel-2: rgba(23, 35, 64, 0.95);
   --sidebar-bg: rgba(8, 14, 28, 0.82);
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-2: rgba(255, 255, 255, 0.06);
+  --surface-3: rgba(109, 124, 255, 0.10);
+  --input-bg: #1b2540;
+  --modal-bg: #11182d;
+  --overlay: rgba(3, 8, 20, 0.7);
   --border: rgba(255, 255, 255, 0.08);
   --text: #e8eefc;
+  --text-soft: #dce5ff;
+  --heading-soft: #d9e3fb;
   --muted: #9aa8c7;
   --primary: #6d7cff;
   --primary-hover: #5a69f0;
@@ -24,14 +32,25 @@
 :root[data-theme='light'] {
   --bg: #eef4ff;
   --bg-soft: #ffffff;
-  --panel: rgba(255, 255, 255, 0.92);
+  --panel: rgba(255, 255, 255, 0.94);
   --panel-2: rgba(255, 255, 255, 0.98);
   --sidebar-bg: linear-gradient(180deg, #dce9ff 0%, #eef5ff 100%);
+  --surface: rgba(20, 55, 120, 0.04);
+  --surface-2: rgba(20, 55, 120, 0.06);
+  --surface-3: rgba(78, 120, 255, 0.10);
+  --input-bg: #ffffff;
+  --modal-bg: #ffffff;
+  --overlay: rgba(71, 96, 145, 0.18);
   --border: rgba(80, 112, 172, 0.14);
   --text: #12203f;
+  --text-soft: #233963;
+  --heading-soft: #1b2f57;
   --muted: #5f7297;
   --primary: #4e78ff;
   --primary-hover: #3c67ee;
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #e11d48;
   --shadow: 0 14px 34px rgba(34, 62, 120, 0.12);
 }
 
@@ -50,6 +69,7 @@ body,
     var(--bg);
   color: var(--text);
 }
+
 
 body {
   overflow-x: hidden;
@@ -124,7 +144,7 @@ button {
   text-align: center;
   padding: 24px;
   color: var(--muted);
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--surface);
 }
 
 .primaryBtn {
@@ -143,7 +163,7 @@ button {
 }
 
 .secondaryBtn {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface);
   color: var(--text);
   padding: 12px 18px;
   border-radius: 14px;
@@ -151,8 +171,17 @@ button {
   border: 1px solid var(--border);
 }
 
+.closeBtn {
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+  color: var(--text);
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-weight: 700;
+  border: 1px solid color-mix(in srgb, var(--danger) 28%, transparent);
+}
+
 :root[data-theme='light'] .secondaryBtn {
-  background: rgba(255, 255, 255, 0.8);
+  background: #ffffff;
 }
 
 @media (max-width: 820px) {

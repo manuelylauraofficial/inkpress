@@ -178,3 +178,16 @@
     border-radius: 16px;
   }
 }
+
+:root[data-theme='light'] .brandBox {
+  background: linear-gradient(135deg, rgba(78, 120, 255, 0.10), rgba(255, 255, 255, 0.7));
+}
+
+:root[data-theme='light'] .navItem:hover,
+:root[data-theme='light'] .sidebarActionBtn:hover {
+  background: rgba(78, 120, 255, 0.08);
+}
+
+:root[data-theme='light'] .sidebarActionBtn {
+  background: rgba(255, 255, 255, 0.8);
+}

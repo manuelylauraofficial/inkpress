@@ -35,7 +35,12 @@ function AppContent() {
 
   return (
     <div className="appShell">
-      <Sidebar open={sidebarOpen} onClose={handleCloseSidebar} />
+      <Sidebar
+        open={sidebarOpen}
+        onClose={handleCloseSidebar}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
+      />
 
       <div className="mainArea">
         <Header
