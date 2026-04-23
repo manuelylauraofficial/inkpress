@@ -335,27 +335,30 @@ export default function Orders() {
   }
 
   const filteredOrders = useMemo(() => {
-    const q = search.trim().toLowerCase()
+  const q = search.trim().toLowerCase()
 
-    return orders.filter((order) => {
-      const customer = order.customers
-      const customerName = customer
-        ? `${customer.company_name || ''} ${customer.first_name || ''} ${customer.last_name || ''}`.toLowerCase()
-        : ''
+  return orders.filter((order) => {
+    const customer = order.customers
+    const customerName = customer
+      ? `${customer.company_name || ''} ${customer.first_name || ''} ${customer.last_name || ''}`.toLowerCase()
+      : ''
 
-      const statusMatch = !statusFilter || order.status === statusFilter
-      const fromMatch = !dateFrom || order.order_date >= dateFrom
-      const toMatch = !dateTo || order.order_date <= dateTo
+    const notes = (order.notes || '').toLowerCase()
 
-      const textMatch =
-        !q ||
-        (order.order_number || '').toLowerCase().includes(q) ||
-        (order.status || '').toLowerCase().includes(q) ||
-        customerName.includes(q)
+    const statusMatch = !statusFilter || order.status === statusFilter
+    const fromMatch = !dateFrom || order.order_date >= dateFrom
+    const toMatch = !dateTo || order.order_date <= dateTo
 
-      return statusMatch && fromMatch && toMatch && textMatch
-    })
-  }, [orders, search, statusFilter, dateFrom, dateTo])
+    const textMatch =
+      !q ||
+      (order.order_number || '').toLowerCase().includes(q) ||
+      (order.status || '').toLowerCase().includes(q) ||
+      customerName.includes(q) ||
+      notes.includes(q)
+
+    return statusMatch && fromMatch && toMatch && textMatch
+  })
+}, [orders, search, statusFilter, dateFrom, dateTo])
 
   function getCustomerLabel(customer) {
     if (!customer) return '—'
@@ -407,142 +410,166 @@ export default function Orders() {
   }
 
   function renderOrderCard(order) {
-    return (
-      <article className="orderMobileCard" key={order.id}>
-        <div className="orderMobileCard__top">
-          <div>
-            <div className="orderMobileCard__customer">
-              {getCustomerLabel(order.customers)}
-            </div>
-            <div className="orderMobileCard__code">{order.order_number}</div>
+  return (
+    <article className="orderMobileCard orderMobileCard--compact" key={order.id}>
+      <div className="orderMobileCard__top">
+        <div className="orderMobileCard__head">
+          <div className="orderMobileCard__customer">
+            {getCustomerLabel(order.customers)}
           </div>
-
-          <span className={getStatusClass(order.status)}>
-            {getStatusLabel(order.status)}
-          </span>
+          <div className="orderMobileCard__code">{order.order_number}</div>
         </div>
 
-        <div className="orderMobileCard__grid">
-          <div className="orderInfoBox">
-            <span>Data ordine</span>
-            <strong>{formatDate(order.order_date)}</strong>
-          </div>
+        <span className={getStatusClass(order.status)}>
+          {getStatusLabel(order.status)}
+        </span>
+      </div>
 
-          <div className="orderInfoBox">
-            <span>Consegna</span>
-            <strong>{formatDate(order.delivery_date)}</strong>
-          </div>
+      {order.notes ? (
+        <div className="orderMobileCard__infoHighlight">
+          <span>Info</span>
+          <strong>{order.notes}</strong>
+        </div>
+      ) : null}
 
-          <div className="orderInfoBox orderInfoBox--total">
-            <span>Totale</span>
-            <strong>€ {Number(order.total || 0).toFixed(2)}</strong>
-          </div>
+      <div className="orderMobileCard__meta">
+        <div className="orderInfoBox">
+          <span>Ordine</span>
+          <strong>{formatDate(order.order_date)}</strong>
         </div>
 
-        <div className="orderMobileCard__actions">
+        <div className="orderInfoBox">
+          <span>Consegna</span>
+          <strong>{formatDate(order.delivery_date)}</strong>
+        </div>
+      </div>
+
+      <div className="orderMobileCard__bottom">
+        <div className="orderInfoBox orderInfoBox--total compactTotal">
+          <span>Totale</span>
+          <strong>€ {Number(order.total || 0).toFixed(2)}</strong>
+        </div>
+      </div>
+
+      <div className="orderMobileCard__actions">
+        <button
+          className="secondaryBtn smallBtn"
+          onClick={() => handleOpenDetails(order)}
+        >
+          Dettagli
+        </button>
+
+        {order.status !== 'annullato' ? (
           <button
             className="secondaryBtn smallBtn"
-            onClick={() => handleOpenDetails(order)}
+            onClick={() => handleOpenEdit(order)}
           >
-            Dettagli
+            Modifica
           </button>
+        ) : null}
 
-          {order.status !== 'annullato' ? (
-            <button
-              className="secondaryBtn smallBtn"
-              onClick={() => handleOpenEdit(order)}
-            >
-              Modifica
-            </button>
-          ) : null}
-
-          {order.status !== 'annullato' ? (
-            <button
-              className="dangerBtn smallBtn"
-              onClick={() => handleCancelOrder(order.id)}
-            >
-              Annulla
-            </button>
-          ) : null}
-        </div>
-      </article>
-    )
-  }
+        {order.status !== 'annullato' ? (
+          <button
+            className="dangerBtn smallBtn"
+            onClick={() => handleCancelOrder(order.id)}
+          >
+            Annulla
+          </button>
+        ) : null}
+      </div>
+    </article>
+  )
+}
 
   function renderOrdersTable(list) {
-    return (
-      <div className="tableWrap ordersDesktopView">
-        <table className="dataTable">
-          <thead>
-            <tr>
-              <th>Ordine</th>
-              <th>Cliente</th>
-              <th>Stato</th>
-              <th>Date</th>
-              <th>Totale</th>
-              <th>Azioni</th>
-            </tr>
-          </thead>
-          <tbody>
-            {list.map((order) => (
-              <tr key={order.id}>
-                <td>
-                  <div className="tableMain">{order.order_number}</div>
-                </td>
-                <td>
-                  <div className="tableMain">{getCustomerLabel(order.customers)}</div>
-                </td>
-                <td>
-                  <span className={getStatusClass(order.status)}>
-                    {getStatusLabel(order.status)}
-                  </span>
-                </td>
-                <td>
-                  <div className="tableMain">{formatDate(order.order_date)}</div>
-                  <div className="tableSub">
-                    Consegna: {formatDate(order.delivery_date)}
-                  </div>
-                </td>
-                <td>
-                  <div className="tableMain">
-                    € {Number(order.total || 0).toFixed(2)}
-                  </div>
-                </td>
-                <td>
-                  <div className="rowActions">
+  return (
+    <div className="tableWrap ordersDesktopView">
+      <table className="dataTable ordersTable">
+        <thead>
+          <tr>
+            <th>Ordine</th>
+            <th>Cliente</th>
+            <th>Info</th>
+            <th>Stato</th>
+            <th>Date</th>
+            <th>Totale</th>
+            <th>Azioni</th>
+          </tr>
+        </thead>
+        <tbody>
+          {list.map((order) => (
+            <tr key={order.id}>
+              <td>
+                <div className="tableMain">{order.order_number}</div>
+              </td>
+
+              <td>
+                <div className="tableMain">{getCustomerLabel(order.customers)}</div>
+              </td>
+
+              <td>
+                <div
+                  className="orderNotesPreview"
+                  title={order.notes || ''}
+                >
+                  {order.notes || '—'}
+                </div>
+              </td>
+
+              <td>
+                <span className={getStatusClass(order.status)}>
+                  {getStatusLabel(order.status)}
+                </span>
+              </td>
+
+              <td>
+                <div className="tableMain">{formatDate(order.order_date)}</div>
+                <div className="tableSub">
+                  Consegna: {formatDate(order.delivery_date)}
+                </div>
+              </td>
+
+              <td>
+                <div className="tableMain">
+                  € {Number(order.total || 0).toFixed(2)}
+                </div>
+              </td>
+
+              <td>
+                <div className="rowActions">
+                  <button
+                    className="secondaryBtn smallBtn"
+                    onClick={() => handleOpenDetails(order)}
+                  >
+                    Dettagli
+                  </button>
+
+                  {order.status !== 'annullato' ? (
                     <button
                       className="secondaryBtn smallBtn"
-                      onClick={() => handleOpenDetails(order)}
+                      onClick={() => handleOpenEdit(order)}
                     >
-                      Dettagli
+                      Modifica
                     </button>
+                  ) : null}
 
-                    {order.status !== 'annullato' ? (
-                      <button
-                        className="secondaryBtn smallBtn"
-                        onClick={() => handleOpenEdit(order)}
-                      >
-                        Modifica
-                      </button>
-                    ) : null}
-
-                    {order.status !== 'annullato' ? (
-                      <button
-                        className="dangerBtn smallBtn"
-                        onClick={() => handleCancelOrder(order.id)}
-                      >
-                        Annulla
-                      </button>
-                    ) : null}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    )
-  }
+                  {order.status !== 'annullato' ? (
+                    <button
+                      className="dangerBtn smallBtn"
+                      onClick={() => handleCancelOrder(order.id)}
+                    >
+                      Annulla
+                    </button>
+                  ) : null}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
 
   return (
     <div className="pageWrap">

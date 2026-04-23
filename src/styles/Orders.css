@@ -461,3 +461,207 @@
   color: var(--muted);
   line-height: 1.2;
 }
+
+.orderMobileCard {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: 0 10px 24px rgba(8, 15, 35, 0.12);
+}
+
+.orderMobileCard + .orderMobileCard {
+  margin-top: 12px;
+}
+
+.orderMobileCard__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.orderMobileCard__head {
+  min-width: 0;
+  flex: 1;
+}
+
+.orderMobileCard__customer {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.98rem;
+  font-weight: 800;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.orderMobileCard__code {
+  margin-top: 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+.orderMobileCard__infoHighlight {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border));
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.orderMobileCard__infoHighlight span {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.orderMobileCard__infoHighlight strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.3;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.orderMobileCard__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.orderMobileCard__bottom {
+  margin-bottom: 10px;
+}
+
+.orderInfoBox {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  min-width: 0;
+}
+
+.orderInfoBox span {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.orderInfoBox strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+.orderInfoBox--total.compactTotal strong {
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.orderMobileCard__actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 920px) {
+  .ordersDesktopView {
+    display: none;
+  }
+
+  .ordersMobileList {
+    display: block;
+  }
+
+  .ordersGroup {
+    padding: 14px;
+  }
+
+  .ordersGroup__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ordersGroup__count {
+    width: fit-content;
+    min-width: 42px;
+    height: 42px;
+  }
+
+  .orderMobileCard .smallBtn {
+    width: 100%;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 10px;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .orderMobileCard {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .orderMobileCard__top {
+    align-items: flex-start;
+  }
+
+  .orderMobileCard__customer {
+    font-size: 0.94rem;
+  }
+
+  .orderMobileCard__code {
+    font-size: 0.78rem;
+  }
+
+  .orderMobileCard__meta {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .orderMobileCard__actions {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  .orderMobileCard .statusBadge {
+    font-size: 0.72rem;
+    padding: 6px 10px;
+    white-space: nowrap;
+  }
+}
+
+.ordersTable th:nth-child(3),
+.ordersTable td:nth-child(3) {
+  min-width: 220px;
+  max-width: 300px;
+}
+
+.orderNotesPreview {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.35;
+  color: var(--text);
+  word-break: break-word;
+}
+
+@media (max-width: 1200px) {
+  .ordersTable th:nth-child(3),
+  .ordersTable td:nth-child(3) {
+    min-width: 180px;
+    max-width: 240px;
+  }
+}
